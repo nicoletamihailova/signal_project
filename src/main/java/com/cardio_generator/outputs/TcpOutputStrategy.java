@@ -6,12 +6,27 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.Executors;
 
+/**
+ * Sends simulated patient data to a connected TCP client.
+ * A TCP server is started on the specified port, and once a client connects,
+ * data is streamed to it.
+ *
+ * <p>Each message is sent as comma-separated values:
+ * patient ID, timestamp, label, and data.
+ */
 public class TcpOutputStrategy implements OutputStrategy {
 
     private ServerSocket serverSocket;
     private Socket clientSocket;
     private PrintWriter out;
 
+    /**
+     * Creates a TCP output strategy and starts a server on the given port.
+     * The client connection is handled on a separate thread so the simulator
+     * can keep running while waiting for a connection.
+     *
+     * @param port the TCP port used to listen for clients
+     */
     public TcpOutputStrategy(int port) {
         try {
             serverSocket = new ServerSocket(port);
@@ -32,6 +47,15 @@ public class TcpOutputStrategy implements OutputStrategy {
         }
     }
 
+    /**
+     * Sends a single patient data entry to the connected TCP client.
+     * If no client is connected, nothing is sent.
+     *
+     * @param patientId the patient’s unique ID
+     * @param timestamp when the data was generated (ms since epoch)
+     * @param label     the data type or category
+     * @param data      the generated value or message
+     */
     @Override
     public void output(int patientId, long timestamp, String label, String data) {
         if (out != null) {

@@ -7,6 +7,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Writes simulated patient data into text files inside a given folder.
+ * Each type of data is stored in its own file (e.g. "Alert.txt").
+ *
+ * <p>If the folder does not exist, it will be created. New entries are
+ * always appended to the corresponding file.
+ */
 public class FileOutputStrategy implements OutputStrategy {
     // changed name following lowerCamelCase according to google java style guide
     private String baseDirectory;
@@ -15,10 +22,26 @@ public class FileOutputStrategy implements OutputStrategy {
     // made it private, because internal fields should not be public unless it's necessary
     private final ConcurrentHashMap<String, String> fileMap = new ConcurrentHashMap<>();
 
+    /**
+     * Creates a file-based output strategy using the specified base directory.
+     *
+     * @param baseDirectory the folder where output files will be stored
+     */
     public FileOutputStrategy(String baseDirectory) {
         this.baseDirectory = baseDirectory;
     }
 
+    /**
+     * Writes a single patient data entry to a file based on its label.
+     * The base directory is created if it doesn't exist, and the data is
+     * appended to the corresponding file.
+     *
+     * @param patientId the patient’s unique ID
+     * @param timestamp when the data was generated (ms since epoch)
+     * @param label     the data type used to select the file name
+     * @param data      the value or message to write
+     */
+    
     @Override
     public void output(int patientId, long timestamp, String label, String data) {
         try {
